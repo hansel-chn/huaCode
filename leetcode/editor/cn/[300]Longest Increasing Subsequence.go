@@ -45,6 +45,11 @@ complexity?
 // leetcode submit region begin(Prohibit modification and deletion)
 package main
 
+import (
+	"math"
+	"sort"
+)
+
 func lengthOfLIS(nums []int) int {
 	if len(nums) == 0 {
 		return 0
@@ -55,21 +60,51 @@ func lengthOfLIS(nums []int) int {
 		dp[i] = 1
 	}
 
-	for i := 0; i < len(dp); i++ {
-		for j := 0; j < i; j++ {
-			if nums[j] < nums[i] {
-				dp[i] = max(dp[i], dp[j]+1)
-			}
+	assist := make([]int, 1)
+	assist[0] = math.MinInt
+	for i := 0; i < len(nums); i++ {
+		idx := sort.SearchInts(assist, nums[i])
+		dp[i] = idx
+		if idx < len(assist) {
+			assist[idx] = min(assist[idx], nums[i])
+		} else {
+			assist = append(assist, nums[i])
 		}
 	}
 
-	res := 0
-	for _, v := range dp {
-		res = max(res, v)
-	}
+		res := 0
+		for _, v := range dp {
+			res = max(res, v)
+		}
 
-	return res
+		return res
 }
+
+//func lengthOfLIS(nums []int) int {
+//	if len(nums) == 0 {
+//		return 0
+//	}
+//
+//	dp := make([]int, len(nums))
+//	for i := range dp {
+//		dp[i] = 1
+//	}
+//
+//	for i := 0; i < len(dp); i++ {
+//		for j := 0; j < i; j++ {
+//			if nums[j] < nums[i] {
+//				dp[i] = max(dp[i], dp[j]+1)
+//			}
+//		}
+//	}
+//
+//	res := 0
+//	for _, v := range dp {
+//		res = max(res, v)
+//	}
+//
+//	return res
+//}
 
 //// iterate
 //func lengthOfLIS(nums []int) int {
