@@ -56,29 +56,51 @@ func lengthOfLIS(nums []int) int {
 	}
 
 	dp := make([]int, len(nums))
-	for i := range dp {
-		dp[i] = 1
-	}
 
 	assist := make([]int, 1)
 	assist[0] = math.MinInt
 	for i := 0; i < len(nums); i++ {
 		idx := sort.SearchInts(assist, nums[i])
-		dp[i] = idx
 		if idx < len(assist) {
 			assist[idx] = min(assist[idx], nums[i])
 		} else {
 			assist = append(assist, nums[i])
 		}
+
+		dp[i] = len(assist)-1
 	}
-
-		res := 0
-		for _, v := range dp {
-			res = max(res, v)
-		}
-
-		return res
+	return dp[len(nums)-1]
 }
+
+//func lengthOfLIS(nums []int) int {
+//	if len(nums) == 0 {
+//		return 0
+//	}
+//
+//	dp := make([]int, len(nums))
+//	for i := range dp {
+//		dp[i] = 1
+//	}
+//
+//	assist := make([]int, 1)
+//	assist[0] = math.MinInt
+//	for i := 0; i < len(nums); i++ {
+//		idx := sort.SearchInts(assist, nums[i])
+//		dp[i] = idx
+//		if idx < len(assist) {
+//			assist[idx] = min(assist[idx], nums[i])
+//		} else {
+//			assist = append(assist, nums[i])
+//		}
+//	}
+//
+//		res := 0
+//		for _, v := range dp {
+//			res = max(res, v)
+//		}
+//
+//		return res
+//}
 
 //func lengthOfLIS(nums []int) int {
 //	if len(nums) == 0 {
