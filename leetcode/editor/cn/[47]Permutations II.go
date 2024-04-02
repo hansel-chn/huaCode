@@ -53,6 +53,7 @@ func permuteUnique(nums []int) [][]int {
 			temp := make([]int, len(current))
 			copy(temp, current)
 			rlt = append(rlt, temp)
+			return
 		}
 
 		pre:=math.MinInt
