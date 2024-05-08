@@ -110,6 +110,8 @@ func reverse(head *ListNode, tail *ListNode) (newHead *ListNode) {
 	return cur
 }
 
+//// https://labuladong.online/algo/data-structure/reverse-nodes-in-k-group/#%E4%B8%80%E3%80%81%E5%88%86%E6%9E%90%E9%97%AE%E9%A2%98
+//// 区别是，对当前节点cur的认识，我写的方法当前节点cur为链的新头部，对应链接中的pre节点；而链接中的cur节点为即将加入新链的节点，pre为新链的头节点
 //func reverse(head *ListNode, tail *ListNode) (newHead *ListNode) {
 //	var prev, cur, next *ListNode
 //	prev = nil
