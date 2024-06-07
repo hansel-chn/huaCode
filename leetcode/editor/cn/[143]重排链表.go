@@ -126,4 +126,31 @@ func reorderList(head *ListNode) {
 	}
 }
 
+//func reorderList(head *ListNode) {
+//	stack := make([]*ListNode, 0)
+//	dummy := &ListNode{Next: head}
+//	for head != nil {
+//		stack = append(stack, head)
+//		head = head.Next
+//	}
+//	left := dummy.Next
+//	right := stack[len(stack)-1]
+//	stack = stack[:len(stack)-1]
+//	for left.Next != right && left != right {
+//		next := left.Next
+//		left.Next = right
+//		right.Next = next
+//		left = next
+//
+//		right = stack[len(stack)-1]
+//		stack = stack[:len(stack)-1]
+//	}
+//	if left == right {
+//		left.Next = nil
+//	}
+//
+//	if left.Next == right {
+//		right.Next = nil
+//	}
+//}
 //leetcode submit region end(Prohibit modification and deletion)
