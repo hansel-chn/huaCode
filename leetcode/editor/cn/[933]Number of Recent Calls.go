@@ -56,9 +56,9 @@ type RecentCounter struct {
 	queue []int
 }
 
-func Constructor() RecentCounter {
-	return RecentCounter{queue: make([]int, 0)}
-}
+//func Constructor() RecentCounter {
+//	return RecentCounter{queue: make([]int, 0)}
+//}
 
 func (this *RecentCounter) Ping(t int) int {
 	this.queue = append(this.queue, t)
