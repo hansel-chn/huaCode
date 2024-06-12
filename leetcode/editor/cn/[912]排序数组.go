@@ -269,9 +269,9 @@ func countSort(nums []int) []int {
 	return newArr
 }
 
-func sortArray(nums []int) []int {
-	return countSort(nums)
-
-}
+//func sortArray(nums []int) []int {
+//	return countSort(nums)
+//
+//}
 
 //leetcode submit region end(Prohibit modification and deletion)
