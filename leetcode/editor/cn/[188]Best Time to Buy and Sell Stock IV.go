@@ -44,6 +44,33 @@ Explanation: Buy on day 2 (price = 2) and sell on day 3 (price = 6), profit = 6-
 // leetcode submit region begin(Prohibit modification and deletion)
 package main
 
+//func maxProfit(k int, prices []int) int {
+//	if k > len(prices)/2 {
+//		k = k/2 + 1
+//	}
+//
+//	dp := make([][][2]int, len(prices))
+//
+//	for i := range dp {
+//		dp[i] = make([][2]int, k+1)
+//	}
+//
+//	for i := 0; i < len(prices); i++ {
+//		for j := 1; j < k+1; j++ {
+//			if i < 1 {
+//				dp[i][j][1] = -prices[i]
+//				dp[i][j][0] = 0
+//				continue
+//			}
+//
+//			dp[i][j][1] = max(dp[i-1][j][1], dp[i-1][j-1][0]-prices[i])
+//			dp[i][j][0] = max(dp[i-1][j][0], dp[i-1][j][1]+prices[i])
+//
+//		}
+//	}
+//	return dp[len(prices)-1][k][0]
+//}
+
 func maxProfit(k int, prices []int) int {
 	return maxProfitAllInOne(k, prices, 0, 0)
 }
