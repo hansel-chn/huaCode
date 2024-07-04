@@ -51,6 +51,7 @@ Output: -1
 package main
 
 import (
+	"container/heap"
 	"math"
 )
 
@@ -85,20 +86,20 @@ func minCostTime(graph [][][]int, start int) []int {
 	minTime[start] = 0
 
 	queue := make(priorityQueue743, 0)
-	queue.Push(node743{
+	heap.Push(&queue, node743{
 		id:   start,
 		time: 0,
 	})
 
 	for queue.Len() > 0 {
-		pop := queue.Pop().(node743)
+		pop := heap.Pop(&queue).(node743)
 		if minTime[pop.id] < pop.time {
 			continue
 		}
 
 		for _, des := range graph[pop.id] {
 			if pop.time+des[1] < minTime[des[0]] {
-				queue.Push(node743{
+				heap.Push(&queue, node743{
 					id:   des[0],
 					time: pop.time + des[1],
 				})
