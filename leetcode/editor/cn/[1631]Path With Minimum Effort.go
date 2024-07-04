@@ -69,7 +69,7 @@ import (
 
 func minimumEffortPath(heights [][]int) int {
 	pq := make(priorityQueue1631, 0)
-	pq.Push(node1631{
+	heap.Push(&pq, node1631{
 		x:     0,
 		y:     0,
 		value: 0,
@@ -102,7 +102,7 @@ func minimumEffortPath(heights [][]int) int {
 			adjEffort := max(pop.value, int(math.Abs(float64(heights[adjX][adjY]-heights[pop.x][pop.y]))))
 			if adjEffort < minEffort[adjX][adjY] {
 
-				heap.Push(&pq,node1631{
+				heap.Push(&pq, node1631{
 					x:     adjX,
 					y:     adjY,
 					value: adjEffort,
