@@ -43,24 +43,49 @@ package main
 
 func deleteDuplicates(head *ListNode) *ListNode {
 	dummy := &ListNode{Next: head}
-	left, right := dummy, head
-
-	for right != nil {
-		flag := 0
-		for right.Next != nil && right.Next.Val == right.Val {
-			right = right.Next
-			flag = 1
+	pre, cur := dummy, head
+	for cur != nil && cur.Next != nil {
+		if pre.Next.Val == cur.Next.Val {
+			cur = cur.Next
+			continue
 		}
 
-		if flag == 0 {
-			left.Next = right
-			left = left.Next
+		if pre.Next == cur {
+			cur = cur.Next
+			pre = pre.Next
+		} else {
+			cur = cur.Next
+			pre.Next = cur
 		}
-		right = right.Next
 	}
 
-	left.Next = nil
+	if pre.Next != cur {
+		cur = cur.Next
+		pre.Next = cur
+	}
 	return dummy.Next
 }
+
+//func deleteDuplicates(head *ListNode) *ListNode {
+//	dummy := &ListNode{Next: head}
+//	left, right := dummy, head
+//
+//	for right != nil {
+//		flag := 0
+//		for right.Next != nil && right.Next.Val == right.Val {
+//			right = right.Next
+//			flag = 1
+//		}
+//
+//		if flag == 0 {
+//			left.Next = right
+//			left = left.Next
+//		}
+//		right = right.Next
+//	}
+//
+//	left.Next = nil
+//	return dummy.Next
+//}
 
 //leetcode submit region end(Prohibit modification and deletion)
