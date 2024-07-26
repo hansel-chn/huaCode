@@ -43,29 +43,68 @@ package main
 
 import (
 	"strconv"
-	"strings"
 )
 
 func binaryTreePaths(root *TreeNode) []string {
-	rlt := make([]string, 0)
-	trail := make([]string, 0)
-	var traverse func(node *TreeNode)
-	traverse = func(node *TreeNode) {
-		if node == nil {
-			return
-		}
+	res := make([]string, 0)
 
-		trail = append(trail, strconv.Itoa(node.Val))
-		if node.Left == nil && node.Right == nil {
-			rlt = append(rlt, strings.Join(trail, "->"))
-		}
-
-		traverse(node.Left)
-		traverse(node.Right)
-		trail = trail[:len(trail)-1]
+	type rec struct {
+		node  *TreeNode
+		trail string
 	}
-	traverse(root)
-	return rlt
+
+	stack := make([]rec, 0)
+	stack = append(stack, rec{
+		node:  root,
+		trail: strconv.Itoa(root.Val),
+	})
+
+	for len(stack) > 0 {
+		r := stack[0]
+		stack = stack[1:]
+
+		if r.node.Left == nil && r.node.Right == nil {
+			res = append(res, r.trail)
+		}
+
+		if r.node.Left != nil {
+			stack = append(stack, rec{
+				node:  r.node.Left,
+				trail: r.trail + "->" + strconv.Itoa(r.node.Left.Val),
+			})
+		}
+
+		if r.node.Right != nil {
+			stack = append(stack, rec{
+				node:  r.node.Right ,
+				trail: r.trail + "->" + strconv.Itoa(r.node.Right.Val),
+			})
+		}
+	}
+
+	return res
 }
+
+//func binaryTreePaths(root *TreeNode) []string {
+//	rlt := make([]string, 0)
+//	trail := make([]string, 0)
+//	var traverse func(node *TreeNode)
+//	traverse = func(node *TreeNode) {
+//		if node == nil {
+//			return
+//		}
+//
+//		trail = append(trail, strconv.Itoa(node.Val))
+//		if node.Left == nil && node.Right == nil {
+//			rlt = append(rlt, strings.Join(trail, "->"))
+//		}
+//
+//		traverse(node.Left)
+//		traverse(node.Right)
+//		trail = trail[:len(trail)-1]
+//	}
+//	traverse(root)
+//	return rlt
+//}
 
 //leetcode submit region end(Prohibit modification and deletion)
