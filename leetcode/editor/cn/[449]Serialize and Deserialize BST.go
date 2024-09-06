@@ -49,6 +49,10 @@ import (
 )
 
 const sep = ","
+const (
+	maxV = 10e5
+	minV = -1
+)
 
 type Codec struct {
 }
@@ -63,7 +67,6 @@ func (this *Codec) serialize(root *TreeNode) string {
 	var serializeHelper func(node *TreeNode)
 	serializeHelper = func(node *TreeNode) {
 		if node == nil {
-			preOrder = append(preOrder, "")
 			return
 		}
 
@@ -77,32 +80,91 @@ func (this *Codec) serialize(root *TreeNode) string {
 
 // Deserializes your encoded data to tree.
 func (this *Codec) deserialize(data string) *TreeNode {
+	if data=="" {
+		return nil
+	}
 	preOrder := strings.Split(data, sep)
 
-	var deserializeHelper func() (node *TreeNode)
-	deserializeHelper = func() (node *TreeNode) {
+	var deserializeHelper func(mi, ma int) (node *TreeNode)
+	deserializeHelper = func(mi, ma int) (node *TreeNode) {
 		if len(preOrder) == 0 {
-			return
-		}
-
-		nvStr := preOrder[0]
-		preOrder=preOrder[1:]
-
-		if nvStr == "" {
 			return nil
 		}
 
-		node = &TreeNode{}
+		nvStr := preOrder[0]
 		nvInt, _ := strconv.Atoi(nvStr)
-		node.Val = nvInt
 
-		node.Left = deserializeHelper()
-		node.Right = deserializeHelper()
-		return node
+		if mi < nvInt && nvInt < ma {
+			preOrder = preOrder[1:]
+			node = &TreeNode{}
+			node.Val = nvInt
+			node.Left = deserializeHelper(mi, nvInt)
+			node.Right = deserializeHelper(nvInt, ma)
+			return node
+		} else {
+			return nil
+		}
 	}
 
-	return deserializeHelper()
+	return deserializeHelper(minV, maxV)
 }
+
+//// preOrder contain null
+//const sep = ","
+//
+//type Codec struct {
+//}
+//
+//func Constructor() Codec {
+//	return Codec{}
+//}
+//
+//// Serializes a tree to a single string.
+//func (this *Codec) serialize(root *TreeNode) string {
+//	preOrder := make([]string, 0)
+//	var serializeHelper func(node *TreeNode)
+//	serializeHelper = func(node *TreeNode) {
+//		if node == nil {
+//			preOrder = append(preOrder, "")
+//			return
+//		}
+//
+//		preOrder = append(preOrder, strconv.Itoa(node.Val))
+//		serializeHelper(node.Left)
+//		serializeHelper(node.Right)
+//	}
+//	serializeHelper(root)
+//	return strings.Join(preOrder, sep)
+//}
+//
+//// Deserializes your encoded data to tree.
+//func (this *Codec) deserialize(data string) *TreeNode {
+//	preOrder := strings.Split(data, sep)
+//
+//	var deserializeHelper func() (node *TreeNode)
+//	deserializeHelper = func() (node *TreeNode) {
+//		if len(preOrder) == 0 {
+//			return
+//		}
+//
+//		nvStr := preOrder[0]
+//		preOrder=preOrder[1:]
+//
+//		if nvStr == "" {
+//			return nil
+//		}
+//
+//		node = &TreeNode{}
+//		nvInt, _ := strconv.Atoi(nvStr)
+//		node.Val = nvInt
+//
+//		node.Left = deserializeHelper()
+//		node.Right = deserializeHelper()
+//		return node
+//	}
+//
+//	return deserializeHelper()
+//}
 
 /**
  * Your Codec object will be instantiated and called as such:
