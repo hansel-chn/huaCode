@@ -43,7 +43,6 @@
 package main
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 )
@@ -57,9 +56,9 @@ const (
 type Codec struct {
 }
 
-func Constructor() Codec {
-	return Codec{}
-}
+//func Constructor() Codec {
+//	return Codec{}
+//}
 
 // Serializes a tree to a single string.
 func (this *Codec) serialize(root *TreeNode) string {
@@ -80,7 +79,7 @@ func (this *Codec) serialize(root *TreeNode) string {
 
 // Deserializes your encoded data to tree.
 func (this *Codec) deserialize(data string) *TreeNode {
-	if data=="" {
+	if data == "" {
 		return nil
 	}
 	preOrder := strings.Split(data, sep)
