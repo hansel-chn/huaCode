@@ -61,52 +61,110 @@
 // leetcode submit region begin(Prohibit modification and deletion)
 package main
 
-import (
-	"sort"
-)
+import "sort"
 
 func accountsMerge(accounts [][]string) [][]string {
-	email2ac := make(map[string][]int)
-	for i, account := range accounts {
+	email2name := make(map[string]string)
+	p := make(map[string]string)
+	uf := NewUF721(p)
+
+	for _, account := range accounts {
+		uName := account[0]
 		for _, email := range account[1:] {
-			if _, ok := email2ac[email]; ok {
-				email2ac[email] = append(email2ac[email], i)
-			} else {
-				email2ac[email] = []int{i}
+			if _, ok := email2name[email]; !ok {
+				email2name[email] = uName
 			}
+			if _, ok := p[email]; !ok {
+				p[email] = email
+			}
+
+			uf.Connect(account[1], email)
+		}
+	}
+
+	afterUnion := make(map[string][]string)
+	for email, _ := range email2name {
+		parent := uf.Find(email)
+		if _, ok := afterUnion[parent]; !ok {
+			afterUnion[parent] = []string{email}
+		} else {
+			afterUnion[parent] = append(afterUnion[parent], email)
 		}
 	}
 
 	rlt := make([][]string, 0)
-	visitedEmail := make(map[string]struct{})
-
-	var traverse func(email string, userEmail *[]string)
-	traverse = func(email string, userEmail *[]string) {
-		if _, ok := visitedEmail[email]; ok {
-			return
-		}
-
-		visitedEmail[email] = struct{}{}
-		*userEmail = append(*userEmail, email)
-
-		acs := email2ac[email]
-		for _, ac := range acs {
-			for _, nxtEmail := range accounts[ac][1:] {
-				traverse(nxtEmail, userEmail)
-			}
-		}
-	}
-
-	for email, acs := range email2ac {
-		userEmail := make([]string, 0)
-		traverse(email, &userEmail)
-		sort.Strings(userEmail)
-		if len(userEmail) != 0 {
-			userEmail = append([]string{accounts[acs[0]][0]}, userEmail...)
-			rlt = append(rlt, userEmail)
-		}
+	for _, emails := range afterUnion {
+		sort.Strings(emails)
+		userEmail := append([]string{email2name[emails[0]]}, emails...)
+		rlt = append(rlt, userEmail)
 	}
 	return rlt
 }
+
+func NewUF721(p map[string]string) UF721 {
+	return UF721{p}
+}
+
+type UF721 struct {
+	Parent map[string]string
+}
+
+func (u *UF721) Find(i string) string {
+	if i != u.Parent[i] {
+		p := u.Find(u.Parent[i])
+		u.Parent[i] = p
+	}
+	return u.Parent[i]
+}
+
+func (u *UF721) Connect(i, j string) {
+	if u.Find(i) != u.Find(j) {
+		u.Parent[u.Find(i)] = j
+	}
+}
+
+//func accountsMerge(accounts [][]string) [][]string {
+//	email2ac := make(map[string][]int)
+//	for i, account := range accounts {
+//		for _, email := range account[1:] {
+//			if _, ok := email2ac[email]; ok {
+//				email2ac[email] = append(email2ac[email], i)
+//			} else {
+//				email2ac[email] = []int{i}
+//			}
+//		}
+//	}
+//
+//	rlt := make([][]string, 0)
+//	visitedEmail := make(map[string]struct{})
+//
+//	var traverse func(email string, userEmail *[]string)
+//	traverse = func(email string, userEmail *[]string) {
+//		if _, ok := visitedEmail[email]; ok {
+//			return
+//		}
+//
+//		visitedEmail[email] = struct{}{}
+//		*userEmail = append(*userEmail, email)
+//
+//		acs := email2ac[email]
+//		for _, ac := range acs {
+//			for _, nxtEmail := range accounts[ac][1:] {
+//				traverse(nxtEmail, userEmail)
+//			}
+//		}
+//	}
+//
+//	for email, acs := range email2ac {
+//		userEmail := make([]string, 0)
+//		traverse(email, &userEmail)
+//		sort.Strings(userEmail)
+//		if len(userEmail) != 0 {
+//			userEmail = append([]string{accounts[acs[0]][0]}, userEmail...)
+//			rlt = append(rlt, userEmail)
+//		}
+//	}
+//	return rlt
+//}
 
 //leetcode submit region end(Prohibit modification and deletion)
