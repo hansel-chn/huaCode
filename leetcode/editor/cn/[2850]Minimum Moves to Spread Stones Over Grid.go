@@ -55,7 +55,6 @@
 package main
 
 import (
-	"fmt"
 	"math"
 )
 
@@ -77,26 +76,22 @@ func minimumMoves(grid [][]int) int {
 		}
 	}
 
-	fmt.Println(more)
-	fmt.Println(less)
-
 	usedMore := make([]int, len(more))
-	usedLess := make([]int, len(less))
-	rlt := math.MaxInt
 	count := 0
-	cur := 0
+	cur := make([]int, 0)
+
+	morePermutation := make([][]int, 0)
 
 	var traverse func()
 	traverse = func() {
 		if count == len(more) {
-			rlt = min(cur, rlt)
+			tmp := make([]int, len(cur))
+			copy(tmp, cur)
+			morePermutation = append(morePermutation, tmp)
 			return
 		}
 
 		for i := 0; i < len(more); i++ {
-			//fmt.Println(usedMore)
-			//fmt.Println(usedLess)
-			//fmt.Println("==============")
 			if usedMore[i] == 1 {
 				continue
 			}
@@ -106,26 +101,99 @@ func minimumMoves(grid [][]int) int {
 			}
 
 			usedMore[i] = 1
-			for j := 0; j < len(less); j++ {
-				if usedLess[j] == 1 {
-					continue
-				}
-				usedLess[j] = 1
-
-				cur += calDistance2850(more[i], less[j])
-				count++
-				traverse()
-				cur -= calDistance2850(more[i], less[j])
-				count--
-
-				usedLess[j] = 0
-			}
+			count++
+			cur = append(cur, i)
+			traverse()
 			usedMore[i] = 0
+			count--
+			cur = cur[:len(cur)-1]
 		}
 	}
 	traverse()
+
+	rlt := math.MaxInt
+	for _, p := range morePermutation {
+		rlt = min(calSteps(p,more, less), rlt)
+	}
+
 	return rlt
 }
+
+func calSteps(p []int,more, less [][]int) int {
+	steps := 0
+	for i := 0; i < len(less); i++ {
+		steps += calDistance2850(more[p[i]], less[i])
+	}
+	return steps
+}
+
+//func minimumMoves(grid [][]int) int {
+//	more := make([][]int, 0)
+//	less := make([][]int, 0)
+//
+//	for i, rows := range grid {
+//		for j, v := range rows {
+//			if v == 0 {
+//				less = append(less, []int{i, j})
+//			}
+//
+//			if v > 1 {
+//				for k := 0; k < v-1; k++ {
+//					more = append(more, []int{i, j})
+//				}
+//			}
+//		}
+//	}
+//
+//	fmt.Println(more)
+//	fmt.Println(less)
+//
+//	usedMore := make([]int, len(more))
+//	usedLess := make([]int, len(less))
+//	rlt := math.MaxInt
+//	count := 0
+//	cur := 0
+//
+//	var traverse func()
+//	traverse = func() {
+//		if count == len(more) {
+//			rlt = min(cur, rlt)
+//			return
+//		}
+//
+//		for i := 0; i < len(more); i++ {
+//			//fmt.Println(usedMore)
+//			//fmt.Println(usedLess)
+//			//fmt.Println("==============")
+//			if usedMore[i] == 1 {
+//				continue
+//			}
+//
+//			if i > 0 && slicesEqual(more[i-1], more[i]) && usedMore[i-1] == 0 {
+//				continue
+//			}
+//
+//			usedMore[i] = 1
+//			for j := 0; j < len(less); j++ {
+//				if usedLess[j] == 1 {
+//					continue
+//				}
+//				usedLess[j] = 1
+//
+//				cur += calDistance2850(more[i], less[j])
+//				count++
+//				traverse()
+//				cur -= calDistance2850(more[i], less[j])
+//				count--
+//
+//				usedLess[j] = 0
+//			}
+//			usedMore[i] = 0
+//		}
+//	}
+//	traverse()
+//	return rlt
+//}
 
 func slicesEqual(slice1, slice2 []int) bool {
 	if len(slice1) != len(slice2) {
