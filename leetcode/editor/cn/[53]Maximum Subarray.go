@@ -43,18 +43,42 @@
 // leetcode submit region begin(Prohibit modification and deletion)
 package main
 
+import "math"
+
 func maxSubArray(nums []int) int {
-	dp := make([]int, len(nums))
-	dp[0] = nums[0]
-	for i := 1; i < len(nums); i++ {
-		dp[i] = max(dp[i-1]+nums[i], nums[i])
+	preSums := make([]int, len(nums)+1)
+	for i, num := range nums {
+		preSums[i+1] = preSums[i] + num
 	}
 
-	rlt := -int(1E5)
-	for _, v := range dp {
-		rlt = max(rlt, v)
+	rlt := math.MinInt
+
+	//minPreSum := 0
+	//for i := 0; i < len(nums); i++ {
+	//	minPreSum = min(minPreSum, preSums[i])
+	//	rlt = max(rlt, preSums[i+1]-minPreSum)
+	//}
+
+	minPreSum := 0
+	for i := 1; i < len(nums)+1; i++ {
+		rlt = max(rlt, preSums[i]-minPreSum)
+		minPreSum = min(minPreSum, preSums[i])
 	}
 	return rlt
 }
+
+//func maxSubArray(nums []int) int {
+//	dp := make([]int, len(nums))
+//	dp[0] = nums[0]
+//	for i := 1; i < len(nums); i++ {
+//		dp[i] = max(dp[i-1]+nums[i], nums[i])
+//	}
+//
+//	rlt := -int(1e5)
+//	for _, v := range dp {
+//		rlt = max(rlt, v)
+//	}
+//	return rlt
+//}
 
 //leetcode submit region end(Prohibit modification and deletion)
