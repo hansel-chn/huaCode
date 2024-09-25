@@ -69,28 +69,48 @@ func maximumCostSubstring(s string, chars string, vals []int) int {
 		char2val[chars[i]] = vals[i]
 	}
 
-	dp := make([]int, len(s))
-
-	dp[0] = max(0, getChar(s[0], char2val))
-
-	for i := 1; i < len(s); i++ {
-		//dp[i] = max(dp[i-1]+getChar(s[i], char2val), getChar(s[i], char2val))
-		if dp[i-1] > 0 {
-			dp[i] = dp[i-1] + getChar(s[i], char2val)
-		} else {
-			dp[i] = getChar(s[i], char2val)
-		}
+	preSums := make([]int, len(s)+1)
+	for i := 0; i < len(s); i++ {
+		preSums[i+1] = preSums[i] + getChar2606(s[i], char2val)
 	}
 
+	minPreSum := 0
 	rlt := 0
-
-	for _, v := range dp {
-		rlt = max(rlt, v)
+	for _, preSum := range preSums {
+		rlt = max(rlt, preSum-minPreSum)
+		minPreSum = min(minPreSum, preSum)
 	}
 	return rlt
 }
 
-func getChar(c byte, char2val map[byte]int) int {
+//func maximumCostSubstring(s string, chars string, vals []int) int {
+//	char2val := make(map[byte]int)
+//	for i := 0; i < len(chars); i++ {
+//		char2val[chars[i]] = vals[i]
+//	}
+//
+//	dp := make([]int, len(s))
+//
+//	dp[0] = max(0, getChar2606(s[0], char2val))
+//
+//	for i := 1; i < len(s); i++ {
+//		//dp[i] = max(dp[i-1]+getChar(s[i], char2val), getChar(s[i], char2val))
+//		if dp[i-1] > 0 {
+//			dp[i] = dp[i-1] + getChar2606(s[i], char2val)
+//		} else {
+//			dp[i] = getChar2606(s[i], char2val)
+//		}
+//	}
+//
+//	rlt := 0
+//
+//	for _, v := range dp {
+//		rlt = max(rlt, v)
+//	}
+//	return rlt
+//}
+
+func getChar2606(c byte, char2val map[byte]int) int {
 	if v, ok := char2val[c]; ok {
 		return v
 	} else {
