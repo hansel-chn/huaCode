@@ -70,4 +70,15 @@ func pow2787(base, exp int) int {
 	return int(math.Pow(float64(base), float64(exp)))
 }
 
+//func  pow2787(x, n int) int {
+//	res := 1
+//	for ; n > 0; n /= 2 {
+//		if n%2 > 0 {
+//			res = res * x
+//		}
+//		x = x * x
+//	}
+//	return res
+//}
+
 //leetcode submit region end(Prohibit modification and deletion)
