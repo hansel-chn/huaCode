@@ -60,10 +60,6 @@
 // leetcode submit region begin(Prohibit modification and deletion)
 package main
 
-import (
-	"math"
-)
-
 func shoppingOffers(price []int, special [][]int, needs []int) int {
 	special = filterSpecial(price, special)
 	nonSpecial := 0
@@ -78,10 +74,14 @@ func shoppingOffers(price []int, special [][]int, needs []int) int {
 	speLen := len(special)
 	priceIdx := len(special[0]) - 1
 
-	minCost := math.MaxInt64
+	minCost := nonSpecial
 	cost := 0
 	var traverse func(pos int)
 	traverse = func(pos int) {
+		if cost > minCost {
+			return
+		}
+
 		for i := pos; i < speLen; i++ {
 			if !checkMinusSpe(special[i], needs) {
 				restCost := costReminder(price, needs)
