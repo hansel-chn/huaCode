@@ -62,37 +62,21 @@ package main
 
 import (
 	"math"
-	"strconv"
-	"strings"
 )
 
 func shoppingOffers(price []int, special [][]int, needs []int) int {
+	special = filterSpecial(price, special)
+	nonSpecial := 0
+	for i := 0; i < len(needs); i++ {
+		nonSpecial += needs[i] * price[i]
+	}
+
+	if len(special) == 0 {
+		return nonSpecial
+	}
+
 	speLen := len(special)
 	priceIdx := len(special[0]) - 1
-	filter := make(map[string][2]int)
-	for i, spe := range special {
-		key := make([]string, 0)
-		for _, v := range spe[:priceIdx] {
-			key = append(key, strconv.Itoa(v))
-		}
-
-		keyStr := strings.Join(key, "_")
-		if discount, ok := filter[keyStr]; !ok {
-			filter[keyStr] = [2]int{spe[priceIdx],i}
-		} else {
-			if spe[priceIdx] < discount[0] {
-				filter[keyStr] = [2]int{spe[priceIdx],i}
-			}
-		}
-	}
-
-	newSpecial:=make([][]int,0)
-	for _, v := range filter {
-		newSpecial = append(newSpecial, special[v[1]])
-	}
-	special=newSpecial
-	speLen = len(special)
-
 
 	minCost := math.MaxInt64
 	cost := 0
@@ -117,12 +101,21 @@ func shoppingOffers(price []int, special [][]int, needs []int) int {
 	}
 	traverse(0)
 
-	nonSpecial := 0
-	for i := 0; i < len(needs); i++ {
-		nonSpecial += needs[i] * price[i]
-	}
 	minCost = min(minCost, nonSpecial)
 	return minCost
+}
+
+func filterSpecial(price []int, special [][]int) (newSpecial [][]int) {
+	for i := 0; i < len(special); i++ {
+		cost := 0
+		for j := 0; j < len(special[0])-1; j++ {
+			cost += special[i][j] * price[j]
+		}
+		if cost > special[i][len(special[i])-1] {
+			newSpecial = append(newSpecial, special[i])
+		}
+	}
+	return newSpecial
 }
 
 func costReminder(price []int, needs []int) int {
