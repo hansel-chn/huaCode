@@ -40,46 +40,88 @@
 // leetcode submit region begin(Prohibit modification and deletion)
 package main
 
-import "math"
+import (
+	"math"
+	"math/bits"
+)
 
 func minimumTimeRequired(jobs []int, k int) int {
-	assign := make([]int, k)
-	minTime := math.MaxInt64
-
-	var traverse func(nxt int)
-	traverse = func(nxt int) {
-		if nxt == len(jobs) {
-			minTime = min(calMaxTime(assign), minTime)
-			return
-		}
-
-		workerTimeMap := make(map[int]struct{})
-		for i := range k {
-			if minTime <= assign[i]+jobs[nxt] {
-				continue
-			}
-
-			if _, ok := workerTimeMap[assign[i]]; ok {
-				continue
-			}
-
-			workerTimeMap[assign[i]] = struct{}{}
-
-			assign[i] += jobs[nxt]
-			traverse(nxt + 1)
-			assign[i] -= jobs[nxt]
+	memo := make([][]int, k+1)
+	jobLen := len(jobs)
+	for i := range memo {
+		memo[i] = make([]int, 1<<jobLen)
+	}
+	for i := 0; i < len(memo); i++ {
+		for j := 0; j < len(memo[0]); j++ {
+			memo[i][j] = -1
 		}
 	}
-	traverse(0)
-	return minTime
+
+	sumJobs := make([]int, 1<<jobLen)
+	for i := 1; i < len(sumJobs); i++ {
+		pos := bits.TrailingZeros(uint(i))
+		sumJobs[i] = sumJobs[i&(i-1)] + jobs[jobLen-pos-1]
+	}
+
+	var dp func(k int, jobsSet int) int
+	dp = func(k int, jobsSet int) int {
+		if memo[k][jobsSet] != -1 {
+			return memo[k][jobsSet]
+		}
+
+		if k == 1 {
+			return sumJobs[jobsSet]
+		}
+
+		minV := math.MaxInt64
+		for i := jobsSet; i > 0; i = (i - 1) & jobsSet {
+			minV = min(minV, max(dp(k-1, i),sumJobs[jobsSet^i]))
+		}
+		minV = min(minV, sumJobs[jobsSet])
+		memo[k][jobsSet] = minV
+		return minV
+	}
+	return dp(k, (1<<jobLen)-1)
 }
 
-func calMaxTime(assign []int) int {
-	maxTime := 0
-	for _, time := range assign {
-		maxTime = max(maxTime, time)
-	}
-	return maxTime
-}
+//func minimumTimeRequired(jobs []int, k int) int {
+//	assign := make([]int, k)
+//	minTime := math.MaxInt64
+//
+//	var traverse func(nxt int)
+//	traverse = func(nxt int) {
+//		if nxt == len(jobs) {
+//			minTime = min(calMaxTime(assign), minTime)
+//			return
+//		}
+//
+//		workerTimeMap := make(map[int]struct{})
+//		for i := range k {
+//			if minTime <= assign[i]+jobs[nxt] {
+//				continue
+//			}
+//
+//			if _, ok := workerTimeMap[assign[i]]; ok {
+//				continue
+//			}
+//
+//			workerTimeMap[assign[i]] = struct{}{}
+//
+//			assign[i] += jobs[nxt]
+//			traverse(nxt + 1)
+//			assign[i] -= jobs[nxt]
+//		}
+//	}
+//	traverse(0)
+//	return minTime
+//}
+//
+//func calMaxTime(assign []int) int {
+//	maxTime := 0
+//	for _, time := range assign {
+//		maxTime = max(maxTime, time)
+//	}
+//	return maxTime
+//}
 
 //leetcode submit region end(Prohibit modification and deletion)
