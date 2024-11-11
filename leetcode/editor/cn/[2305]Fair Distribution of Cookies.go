@@ -50,40 +50,82 @@
 // leetcode submit region begin(Prohibit modification and deletion)
 package main
 
-import "math"
+import (
+	"math"
+	"math/bits"
+)
 
 func distributeCookies(cookies []int, k int) int {
-	childCookies := make([]int, k)
-	minUnfair:=math.MaxInt32
-	var backtrack func(pos int)
-	backtrack = func(pos int) {
-		if pos == len(cookies) {
-			minUnfair=min(minUnfair,maxCookieChild2305(childCookies))
-			return
-		}
+	cLen := len(cookies)
 
-		existMap := make(map[int]struct{})
-		for i := range childCookies {
-			if _, ok := existMap[childCookies[i]]; ok {
-				continue
-			}
+	sumCookies := make([]int, 1<<cLen)
+	for i := 1; i < 1<<cLen; i++ {
+		zeros := bits.TrailingZeros(uint(i))
+		sumCookies[i] = sumCookies[i^(1<<zeros)] + cookies[cLen-zeros-1]
+	}
 
-			existMap[childCookies[i]] = struct{}{}
-			childCookies[i] += cookies[pos]
-			backtrack(pos + 1)
-			childCookies[i] -= cookies[pos]
+	memo := make([][]int, 1<<cLen)
+	for i := 0; i < 1<<cLen; i++ {
+		memo[i] = make([]int, k+1)
+	}
+
+	for i := 0; i < len(memo); i++ {
+		for j := 0; j < len(memo[0]); j++ {
+			memo[i][j] = -1
 		}
 	}
-	backtrack(0)
-	return minUnfair
+	var dp func(combine, k int) int
+	dp = func(combine, k int) int {
+		if memo[combine][k] != -1 {
+			return memo[combine][k]
+		}
+
+		if k == 1 {
+			return sumCookies[combine]
+		}
+
+		minUnfair := math.MaxInt64
+		for i := combine; i > 0; i = (i - 1) & combine {
+			minUnfair = min(minUnfair, max(dp(i, k-1), sumCookies[combine^i]))
+		}
+		memo[combine][k] = minUnfair
+		return minUnfair
+	}
+	return dp((1<<cLen)-1, k)
 }
 
-func maxCookieChild2305(childCookies []int) int {
-	maxCookie:=0
-	for _, cookie := range childCookies {
-		maxCookie=max(maxCookie,cookie)
-	}
-	return maxCookie
-}
+//func distributeCookies(cookies []int, k int) int {
+//	childCookies := make([]int, k)
+//	minUnfair:=math.MaxInt32
+//	var backtrack func(pos int)
+//	backtrack = func(pos int) {
+//		if pos == len(cookies) {
+//			minUnfair=min(minUnfair,maxCookieChild2305(childCookies))
+//			return
+//		}
+//
+//		existMap := make(map[int]struct{})
+//		for i := range childCookies {
+//			if _, ok := existMap[childCookies[i]]; ok {
+//				continue
+//			}
+//
+//			existMap[childCookies[i]] = struct{}{}
+//			childCookies[i] += cookies[pos]
+//			backtrack(pos + 1)
+//			childCookies[i] -= cookies[pos]
+//		}
+//	}
+//	backtrack(0)
+//	return minUnfair
+//}
+//
+//func maxCookieChild2305(childCookies []int) int {
+//	maxCookie:=0
+//	for _, cookie := range childCookies {
+//		maxCookie=max(maxCookie,cookie)
+//	}
+//	return maxCookie
+//}
 
 //leetcode submit region end(Prohibit modification and deletion)
