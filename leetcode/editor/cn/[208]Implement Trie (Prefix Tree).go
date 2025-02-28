@@ -53,7 +53,7 @@ type Trie struct {
 	Val  string
 }
 
-func Constructor() Trie {
+func Constructor208() Trie {
 	return Trie{
 		Trie: [26]*Trie{},
 	}
